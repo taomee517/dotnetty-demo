@@ -28,14 +28,14 @@ namespace dotnetty_server
                     .ChildOption(ChannelOption.SoKeepalive, true)
                     .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
                 {
-                    IChannelPipeline pipeline = channel.Pipeline;
+                    var pipeline = channel.Pipeline;
                     pipeline.AddLast("split", new FrameSplitHandler());
                     pipeline.AddLast("validator", new ValidateHandler());
                     pipeline.AddLast("head-decode", new HeadDecoder());
                     pipeline.AddLast("core", new CoreHandler());
                 }));
                 const int port = 19014;
-                IChannel boundChannel = await bootstrap.BindAsync(port);
+                var boundChannel = await bootstrap.BindAsync(port);
                 Console.WriteLine("server启动成功，监听端口:{0}", port);
                 // logger.Info("server启动成功，监听端口:{}", port);
                 Console.ReadLine();

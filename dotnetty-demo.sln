@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetty-feature", "dotnetty-feature\dotnetty-feature.csproj", "{2148A727-9AA9-435B-A078-791139B6313F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetty-server", "dotnetty-server\dotnetty-server.csproj", "{B344EF12-BDF9-44F5-838D-90A96347B6A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetty-echo", "dotnetty-echo\dotnetty-echo.csproj", "{5FA7114E-9913-4A18-B30D-E91DCEDD0D51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2148A727-9AA9-435B-A078-791139B6313F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2148A727-9AA9-435B-A078-791139B6313F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2148A727-9AA9-435B-A078-791139B6313F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2148A727-9AA9-435B-A078-791139B6313F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B344EF12-BDF9-44F5-838D-90A96347B6A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B344EF12-BDF9-44F5-838D-90A96347B6A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B344EF12-BDF9-44F5-838D-90A96347B6A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B344EF12-BDF9-44F5-838D-90A96347B6A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA7114E-9913-4A18-B30D-E91DCEDD0D51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA7114E-9913-4A18-B30D-E91DCEDD0D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA7114E-9913-4A18-B30D-E91DCEDD0D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA7114E-9913-4A18-B30D-E91DCEDD0D51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

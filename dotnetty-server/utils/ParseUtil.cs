@@ -13,18 +13,25 @@ namespace dotnetty_server.utils
             if(readableSize==0){
                 return null;
             }
-            var starter = new byte[2];
-            for(var i=0; i<readableSize-1; i++){
+            int startIndex = -1;
+            byte[] starter = new byte[2];
+            for (int i = 0; i < readableSize - 1; i++)
+            {
                 starter[0] = buffer.GetByte(i);
-                starter[1] = buffer.GetByte(i+1);
-                if (!BytesUtil.ByteArrayEquals(starter, LaserDefault.Starter)) return null;
-                    buffer.SetReaderIndex(i);
+                starter[1] = buffer.GetByte(i + 1);
+                if (BytesUtil.ByteArrayEquals(starter, LaserDefault.Starter))
+                {
+                    startIndex = i;
                     break;
+                }
             }
             //至少得有13个字节 帧头（2) + 长度(2) + 硬件类型(1) + MAC地址(6) + CRC校验(2)
-            if(readableSize<13){
+            if (startIndex ==-1 || readableSize < 13)
+            {
                 return null;
             }
+
+            buffer.SetReaderIndex(startIndex);
             byte[] srcLength = new byte[2];
             buffer.GetBytes(2, srcLength);
             int length = BytesUtil.Bytes2Int16(srcLength);

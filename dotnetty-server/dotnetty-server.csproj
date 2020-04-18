@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="DotNettyAll" Version="2.6.0" />
+      <PackageReference Include="NewLife.Cache" Version="1.0.6791.1266" />
       <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
       <PackageReference Include="NLog.Config" Version="4.7.0" />
     </ItemGroup>

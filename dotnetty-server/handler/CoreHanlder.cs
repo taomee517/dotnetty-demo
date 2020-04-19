@@ -3,15 +3,15 @@ using System.Net;
 using DotNetty.Transport.Channels;
 using dotnetty_server.beans;
 using dotnetty_server.utils;
-using Microsoft.Extensions.Logging;
 using NewLife.Caching;
 using Newtonsoft.Json;
+using NLog;
 
 namespace dotnetty_server.handler
 {
     public class CoreHandler: ChannelHandlerAdapter
     {
-        // private static ILogger _logger = new LoggerFactory().CreateLogger<CoreHandler>();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         
         private static ICache cache = MemoryCache.Default;
         private static TimeSpan expire = new TimeSpan(0, 0, 5);
@@ -20,26 +20,24 @@ namespace dotnetty_server.handler
         {
            
             var remoteAddress = context.Channel.RemoteAddress;
-            // _logger.LogError("连接建立！remote ={}", remoteAddress.ToString());
+            _logger.Info($"连接建立！remote ={remoteAddress}");
             // var endPoint = remoteAddress.ToString();
             var ip = getIpFromEndPoint(remoteAddress);
-            Console.WriteLine("缓存确认, ip {0} exist: {1}, value: {2}", ip, cache.ContainsKey(ip), cache.Get<int>(ip));
-            if (cache.ContainsKey(ip) && cache.Get<int>(ip) >= 2)
-            {
-                Console.WriteLine("频繁断连的设备，主动拒绝！{0}", ip);
-                context.CloseAsync();
-                return;
-            }
+            // _logger.Info($"缓存确认, ip {ip} exist: {cache.ContainsKey(ip)}, value: {cache.Get<int>(ip)}");
+            // if (cache.ContainsKey(ip) && cache.Get<int>(ip) >= 2)
+            // {
+            //     _logger.Warn($"频繁断连的设备，主动拒绝！{ip}");
+            //     context.CloseAsync();
+            //     return;
+            // }
             base.ChannelActive(context);
-            Console.WriteLine("连接建立！remote ={0}", remoteAddress.ToString());
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
             base.ChannelInactive(context);
             var remoteAddress = context.Channel.RemoteAddress;
-            // _logger.LogWarning("连接断开！remote ={}", remoteAddress.ToString());
-            // var endPoint = remoteAddress.ToString();
+            _logger.Warn($"连接断开！remote ={remoteAddress}");
             var ip = getIpFromEndPoint(remoteAddress);
             if (cache.ContainsKey(ip))
             {
@@ -49,25 +47,24 @@ namespace dotnetty_server.handler
             {
                 cache.Set(ip, 1, expire);
             }
-            Console.WriteLine("连接断开！remote ={0}", remoteAddress.ToString());
+            
         }
 
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
+            if(Equals(message,null)) return;
             var msgJson = JsonConvert.SerializeObject(message);
-            // _logger.LogWarning("收到消息, msg = {}", msgJson);
-            Console.WriteLine("收到消息, msg = {0}", msgJson);
-            context.WriteAndFlushAsync(BytesUtil.Hex2Bytes(
-                "3aa3002a0920200226000701000a2d00d003001a5e959184000100003a980ece3e00000e1014003c000100000000763f"));
+            _logger.Warn($"收到消息,sn = {(message as BaseMessage).Sn} msg = {msgJson}");
+            // context.WriteAndFlushAsync(BytesUtil.Hex2Bytes(
+            //     "3aa3002a0920200226000701000a2d00d003001a5e959184000100003a980ece3e00000e1014003c000100000000763f"));
         }
         
         
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            // _logger.LogError("CoreHandler发生异常！");
-            Console.WriteLine("CoreHandler发生异常！");
+            _logger.Error($"CoreHandler发生异常！e = {exception}");
             context.CloseAsync();
         }
 

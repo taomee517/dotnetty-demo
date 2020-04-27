@@ -11,4 +11,8 @@
       <ProjectReference Include="..\gk-common\gk-common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="NLog.Config" Version="4.7.0" />
+    </ItemGroup>
+
 </Project>

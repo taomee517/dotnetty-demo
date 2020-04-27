@@ -84,6 +84,16 @@ namespace gk_common.utils
         {
             return new byte[2] {(byte) (value >> 8 & 0xff), (byte) (value & 0xff)};
         }
+        
+        /// <summary>
+        /// int型转字节数组
+        /// </summary>
+        /// <param name="value">int32</param>
+        /// <returns>字节数组</returns>
+        public static byte[] Int32ToBytes(Int32 value)
+        {
+            return new byte[4] {(byte) (value >> 24 & 0xff),(byte) (value >> 16 & 0xff),(byte) (value >> 8 & 0xff), (byte) (value & 0xff)};
+        }
 
         /// <summary>
         /// 字节数组转int

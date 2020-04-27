@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
-using gk_common.beans;
 using gk_common.utils;
+using NLog;
 
 namespace gk_server.handler
 {
     public class GkHeadDecoder : MessageToMessageDecoder<IByteBuffer>
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         protected override void Decode(IChannelHandlerContext context, IByteBuffer message, List<object> output)
         {
             try
@@ -20,14 +20,14 @@ namespace gk_server.handler
             }
             finally
             {
-                message.SafeRelease();
+                // message.SafeRelease();
             }
             
         }
         
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            Console.WriteLine("GkHeadDecoder 发生异常,异常原因：{0}", exception.Message);
+            Logger.Error($"GkHeadDecoder 发生异常,异常原因：{exception.Message}");
         }
     }
 }

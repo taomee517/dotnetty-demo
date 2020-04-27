@@ -13,9 +13,9 @@ namespace gk_client
 {
     class Program
     {
-        const string host = "127.0.0.1";
+        const string Host = "127.0.0.1";
         //基康端口
-        const int port = 19557;
+        const int Port = 19557;
         
         static void Main(string[] args)
         {
@@ -40,8 +40,8 @@ namespace gk_client
                         pipeline.AddLast("idle", new IdleStateHandler(new TimeSpan(0, 0, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 0)));
                         pipeline.AddLast("device", new GkDevice());
                     }));
-                var addr = IPAddress.Parse(host);
-                var endPoint = new IPEndPoint(addr, port);
+                var addr = IPAddress.Parse(Host);
+                var endPoint = new IPEndPoint(addr, Port);
                 var channel =  await bootstrap.ConnectAsync(endPoint);
                 Console.ReadLine();
                 await channel.CloseAsync();

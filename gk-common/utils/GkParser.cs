@@ -110,10 +110,7 @@ namespace gk_common.utils
                 var msgId = buffer.ReadInt();
 
                 var srcTime = buffer.ReadInt();
-                var timeBase = TimeZoneInfo.ConvertTime(new DateTime(2000, 1, 1), TimeZoneInfo.Local);
-                var timestamp = (srcTime * 10000000L);
-                var timeOffset = new TimeSpan(timestamp);
-                var targetTime = timeBase.Add(timeOffset);
+                var targetTime = TimeUtil.BuildTime(srcTime);
 
                 var msgType = buffer.ReadUnsignedShort();
                 var opsType = buffer.ReadUnsignedShort();
@@ -148,13 +145,11 @@ namespace gk_common.utils
                 buffer.ReadBytes(coreContent);
 
                 var body = new BaseBody();
-                body.Id = Convert.ToString(msgId, 16);
                 body.IdType = EnumUtil.ToEnum<IdType>(msgId);
                 body.Time = targetTime;
                 body.MsgType = EnumUtil.ToEnum<MsgType>(msgType);
                 body.OpsType = EnumUtil.ToEnum<OpsType>(opsType);
                 body.Attribute = attr;
-                body.AttributeHex = Convert.ToString(msgAttr, 16);
                 body.Length = coreContentLen;
                 body.SerialNumber = serial;
                 body.CoreMsg = coreContent;

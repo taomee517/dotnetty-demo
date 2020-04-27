@@ -39,6 +39,10 @@ namespace gk_common.utils
             for (var i=0; i<lastIndex; i++)
             {
                 var b = bytes[i];
+                if (b<16)
+                {
+                    sb.Append(0);
+                }
                 sb.Append(Convert.ToString(b, 16));
             }
             return sb.ToString();

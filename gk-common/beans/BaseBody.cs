@@ -5,8 +5,6 @@ namespace gk_common.beans
 {
     public class BaseBody
     {
-        public string Id { get; set; }
-        
         public IdType IdType  { get; set; }
 
         public DateTime Time { get; set; }
@@ -16,8 +14,6 @@ namespace gk_common.beans
         public OpsType OpsType { get; set; }
 
         public Attribute Attribute { get; set; }
-
-        public string AttributeHex { get; set; }
 
         public ushort Length { get; set; }
 

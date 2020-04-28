@@ -1,4 +1,6 @@
 ﻿using System;
+using DotNetty.Buffers;
+
 
 namespace gk_unit_test
 {
@@ -10,6 +12,18 @@ namespace gk_unit_test
             Console.WriteLine(timestamp);
             var target = BuildTime(timestamp);
             Console.WriteLine(target);
+
+            var bytes = new byte[] {254, 150, 118, 153};
+            var fv = BytesToDouble(bytes);
+            var fvStr = fv.ToString("0.00");
+            Console.WriteLine("转成小数结果：{0}", fvStr);
+        }
+
+
+        private static float BytesToDouble(byte[] bytes)
+        {
+            var buffer = Unpooled.WrappedBuffer(bytes);
+            return buffer.ReadFloat();
         }
 
 

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
-using DotNetty.Codecs;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;

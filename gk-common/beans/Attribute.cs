@@ -7,8 +7,8 @@ namespace gk_common.beans
         public bool AckSuccess { get; set; }
         public InfoValueType ValueType { get; set; }
         
-        //传感器的维度
-        public int SensorDimension { get; set; }
+        //传感器的维度(参数个数)
+        public int DataSize { get; set; }
         public ReportType ReportType { get; set; }
         
         //测试标志
@@ -22,6 +22,6 @@ namespace gk_common.beans
 
         public bool Force { get; set; }
 
-        public int Rest { get; set; }
+        public DigitType DigitType { get; set; }
     }
 }

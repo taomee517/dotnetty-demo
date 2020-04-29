@@ -119,25 +119,25 @@ namespace gk_common.utils
                 var ackSuccess = (msgAttr >> 15 & 1) == 0;
                 var infoValueTypeValue = msgAttr >> 13 & 3;
                 var infoValueType = EnumUtil.ToEnum<InfoValueType>(infoValueTypeValue);
-                var sensorDimension = msgAttr >> 10 & 7;
+                var dataSize = msgAttr >> 10 & 7;
                 var reportTypeValue = msgAttr >> 8 & 3;
                 var reportType = EnumUtil.ToEnum<ReportType>(reportTypeValue);
                 var isTest = (msgAttr >> 7 & 1) == 1;
                 var isHistory = (msgAttr >> 6 & 1) == 1;
                 var isRepeat = (msgAttr >> 5 & 1) == 1;
                 var force = (msgAttr >> 4 & 1) == 1;
-                var rest = msgAttr & 7;
+                var digitType = msgAttr & 7;
 
                 var attr = new Attribute();
                 attr.AckSuccess = ackSuccess;
                 attr.ValueType = infoValueType;
-                attr.SensorDimension = sensorDimension;
+                attr.DataSize = dataSize;
                 attr.ReportType = reportType;
                 attr.IsTest = isTest;
                 attr.IsHistory = isHistory;
                 attr.IsRepeat = isRepeat;
                 attr.Force = force;
-                attr.Rest = rest;
+                attr.DigitType = EnumUtil.ToEnum<DigitType>(digitType);
 
                 var coreContentLen = buffer.ReadUnsignedShort();
                 var serial = buffer.ReadInt();

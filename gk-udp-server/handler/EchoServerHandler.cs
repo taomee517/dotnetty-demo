@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 
@@ -15,10 +16,12 @@ namespace gk_udp_server.handler
             {
                 Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
             }
-            context.WriteAsync(new DatagramPacket(buffer, context.Channel.RemoteAddress));
-        }
 
-        public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
+            var resp = Unpooled.Buffer(buffer.ReadableBytes);
+            buffer.ReadBytes(resp);
+            var respPacket = new DatagramPacket(resp, packet.Sender);
+            context.WriteAndFlushAsync(respPacket);
+        }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {

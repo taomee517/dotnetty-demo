@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DotNetty.Buffers;
 using DotNetty.Common.Utilities;
 using gk_common.beans;
@@ -107,57 +108,61 @@ namespace gk_common.utils
             var buffer = message.Content;
             try
             {
-                var msgId = buffer.ReadInt();
+                var bodies = new List<BaseBody>();
+                do
+                {
+                    var msgId = buffer.ReadInt();
 
-                var srcTime = buffer.ReadInt();
-                var targetTime = TimeUtil.BuildTime(srcTime);
+                    var srcTime = buffer.ReadInt();
+                    var targetTime = TimeUtil.BuildTime(srcTime);
 
-                var msgType = buffer.ReadUnsignedShort();
-                var opsType = buffer.ReadUnsignedShort();
+                    var msgType = buffer.ReadUnsignedShort();
+                    var opsType = buffer.ReadUnsignedShort();
 
-                var msgAttr = buffer.ReadUnsignedShort();
-                var ackSuccess = (msgAttr >> 15 & 1) == 0;
-                var infoValueTypeValue = msgAttr >> 13 & 3;
-                var infoValueType = EnumUtil.ToEnum<InfoValueType>(infoValueTypeValue);
-                var dataSize = msgAttr >> 10 & 7;
-                var reportTypeValue = msgAttr >> 8 & 3;
-                var reportType = EnumUtil.ToEnum<ReportType>(reportTypeValue);
-                var isTest = (msgAttr >> 7 & 1) == 1;
-                var isHistory = (msgAttr >> 6 & 1) == 1;
-                var isRepeat = (msgAttr >> 5 & 1) == 1;
-                var force = (msgAttr >> 4 & 1) == 1;
-                var digitType = msgAttr & 7;
+                    var msgAttr = buffer.ReadUnsignedShort();
+                    var ackSuccess = (msgAttr >> 15 & 1) == 0;
+                    var infoValueTypeValue = msgAttr >> 13 & 3;
+                    var infoValueType = EnumUtil.ToEnum<InfoValueType>(infoValueTypeValue);
+                    var dataSize = (msgAttr >> 10 & 7) + 1;
+                    var reportTypeValue = msgAttr >> 8 & 3;
+                    var reportType = EnumUtil.ToEnum<ReportType>(reportTypeValue);
+                    var isTest = (msgAttr >> 7 & 1) == 1;
+                    var isHistory = (msgAttr >> 6 & 1) == 1;
+                    var isRepeat = (msgAttr >> 5 & 1) == 1;
+                    var force = (msgAttr >> 4 & 1) == 1;
+                    var digitType = msgAttr & 7;
 
-                var attr = new Attribute();
-                attr.AckSuccess = ackSuccess;
-                attr.ValueType = infoValueType;
-                attr.DataSize = dataSize;
-                attr.ReportType = reportType;
-                attr.IsTest = isTest;
-                attr.IsHistory = isHistory;
-                attr.IsRepeat = isRepeat;
-                attr.Force = force;
-                attr.DigitType = EnumUtil.ToEnum<DigitType>(digitType);
+                    var attr = new Attribute();
+                    attr.AckSuccess = ackSuccess;
+                    attr.ValueType = infoValueType;
+                    attr.DataSize = dataSize;
+                    attr.ReportType = reportType;
+                    attr.IsTest = isTest;
+                    attr.IsHistory = isHistory;
+                    attr.IsRepeat = isRepeat;
+                    attr.Force = force;
+                    attr.DigitType = EnumUtil.ToEnum<DigitType>(digitType);
 
-                var coreContentLen = buffer.ReadUnsignedShort();
-                var serial = buffer.ReadInt();
-                var coreContent = new byte[coreContentLen - 4];
-                buffer.ReadBytes(coreContent);
+                    var coreContentLen = buffer.ReadUnsignedShort();
+                    var serial = buffer.ReadInt();
+                    var coreContent = new byte[coreContentLen - 4];
+                    buffer.ReadBytes(coreContent);
 
-                var body = new BaseBody();
-                body.IdType = EnumUtil.ToEnum<IdType>(msgId);
-                body.Time = targetTime;
-                body.MsgType = EnumUtil.ToEnum<MsgType>(msgType);
-                body.OpsType = EnumUtil.ToEnum<OpsType>(opsType);
-                body.Attribute = attr;
-                body.Length = coreContentLen;
-                body.SerialNumber = serial;
-                body.CoreMsg = coreContent;
-
+                    var body = new BaseBody();
+                    body.IdType = EnumUtil.ToEnum<IdType>(msgId);
+                    body.Time = targetTime;
+                    body.MsgType = EnumUtil.ToEnum<MsgType>(msgType);
+                    body.OpsType = EnumUtil.ToEnum<OpsType>(opsType);
+                    body.Attribute = attr;
+                    body.Length = coreContentLen;
+                    body.SerialNumber = serial;
+                    body.CoreMsg = coreContent;
+                    bodies.Add(body);
+                } while (buffer.ReadableBytes>0);
                 return new Message
                 {
                     Header = message.Header,
-                    Body = body
+                    Bodies = bodies
                 };
             }
             finally
@@ -168,19 +173,46 @@ namespace gk_common.utils
         
         public static void ParseCore(ref Message msg)
         {
-            var core = msg.Body.CoreMsg;
-            if(core == null) return;
-            var buffer = Unpooled.WrappedBuffer(core);
-            switch (msg.Body.IdType)
+            var bodies = msg.Bodies;
+            foreach (var body in bodies)
             {
-                case IdType.HeartBeat:
-                    var heartBeatType = EnumUtil.ToEnum<HeartBeatType>(buffer.ReadInt());
-                    var keepAliveDuration = buffer.ReadInt();
-                    msg.Body.HeartBeatType = heartBeatType;
-                    msg.Body.KeepAliveDuration = keepAliveDuration;
-                    break;
-                default:
-                    break;
+                var core = body.CoreMsg;
+                if(core == null) return;
+                var buffer = Unpooled.WrappedBuffer(core);
+                switch (body.IdType)
+                {
+                    case IdType.HeartBeat:
+                        var heartBeatType = EnumUtil.ToEnum<HeartBeatType>(buffer.ReadInt());
+                        var keepAliveDuration = buffer.ReadInt();
+                        var hb = new HeartBeatInfo();
+                        hb.HeartBeatType = heartBeatType;
+                        hb.KeepAliveDuration = keepAliveDuration;
+                        body.HeartBeatInfo = hb;
+                        break;
+                    case IdType.BatteryInfo:
+                        var voltage = buffer.ReadFloat();
+                        var temp = buffer.ReadFloat();
+                        var capa = buffer.ReadFloat();
+                        var battery = new BatteryData();
+                        battery.voltage = voltage;
+                        battery.batteryTemp = temp;
+                        battery.capacity = capa;
+                        body.BatteryData = battery;
+                        break;
+                    case IdType.SensorData:
+                        var sensorValues = new List<double>();
+                        do
+                        {
+                            var value = buffer.ReadFloat();
+                            sensorValues.Add(value);
+                        } while (buffer.ReadableBytes > 0);
+                        var sensor = new SensorData();
+                        sensor.UnparsedData = sensorValues;
+                        body.SensorData = sensor;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         

@@ -31,7 +31,7 @@ namespace gk_udp_server.handler
             {
                 // var json = JsonConvert.SerializeObject(msg,Formatting.None);
                 GkParser.ParseCore(ref msg);
-                Logger.Info($"收到设备消息, msg:{msg.Body.IdType.ToString()}");
+                Logger.Info($"收到设备消息, msg:{msg.Bodies[0].IdType.ToString()}");
                 MsgBuilder.BuildResp(context, msg);
             }
         }

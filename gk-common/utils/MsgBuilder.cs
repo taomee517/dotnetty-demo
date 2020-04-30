@@ -14,7 +14,7 @@ namespace gk_common.utils
         {
             var respHbType = Convert.ToInt32(HeartBeatType.KeepAlive);
             var coreRespContent = BytesUtil.Int32ToBytes(respHbType);
-            var serial = message.Body.SerialNumber;
+            var serial = message.Bodies[0].SerialNumber;
             var content = BuildContent(IdType.HeartBeat, MsgType.State, OpsType.ReportCommand,  0, serial, coreRespContent);
         }
 

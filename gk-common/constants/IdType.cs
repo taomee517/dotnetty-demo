@@ -39,7 +39,7 @@
         PayloadSlaveServerAddress = 0x7ffe0811,
         
         //传感器数据
-        SensorData = 0x7ffead00,
+        SensorData = 0x7ffe1d00,
         
         //历史数据-自记数据
         HistoryData = 0x7ffe0059,

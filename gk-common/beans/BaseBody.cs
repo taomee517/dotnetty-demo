@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using gk_common.constants;
 
 namespace gk_common.beans
@@ -21,9 +22,11 @@ namespace gk_common.beans
 
         public byte[] CoreMsg { get; set; }
 
-        public HeartBeatType HeartBeatType { get; set; }
+        public HeartBeatInfo HeartBeatInfo { get; set; }
         
-        public int KeepAliveDuration { get; set; }
+        public BatteryData BatteryData { get; set; }
+        
+        public SensorData SensorData { get; set; }
 
 
     }

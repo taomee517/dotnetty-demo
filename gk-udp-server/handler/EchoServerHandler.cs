@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Text;
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using gk_common.utils;
 
 namespace gk_udp_server.handler
 {
@@ -12,13 +12,12 @@ namespace gk_udp_server.handler
         {
             var packet = message as DatagramPacket;
             var buffer = packet.Content;
-            if (buffer != null)
-            {
-                Console.WriteLine("Received from client: " + buffer.ToString(Encoding.UTF8));
-            }
-
             var resp = Unpooled.Buffer(buffer.ReadableBytes);
             buffer.ReadBytes(resp);
+            if (buffer != null)
+            {
+                Console.WriteLine("Received from client: " + BytesUtil.BytesToHex(resp.Array));
+            }
             var respPacket = new DatagramPacket(resp, packet.Sender);
             context.WriteAndFlushAsync(respPacket);
         }

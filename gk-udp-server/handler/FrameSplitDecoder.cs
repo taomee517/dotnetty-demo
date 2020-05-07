@@ -2,18 +2,26 @@
 using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Sockets;
 using gk_common.utils;
+using NLog;
 
 namespace gk_udp_server.handler
 {
-    public class FrameSplitDecoder : ByteToMessageDecoder
+    public class FrameSplitDecoder : MessageToMessageDecoder<DatagramPacket>
     {
-        protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+
+        protected override void Decode(IChannelHandlerContext context, DatagramPacket message, List<object> output)
         {
-            try{
+            Logger.Info("FrameSplitDecoder 收到server端消息");
+            var input = message.Content;
+            try
+            {
                 var buffer = GkParser.Split(input);
                 if(buffer==null) return;
-                output.Add(buffer);
+                output.Add(new DatagramPacket(buffer,message.Sender));
             }
             finally
             {
@@ -21,12 +29,11 @@ namespace gk_udp_server.handler
             }
         }
 
-
         private void ResetBuffer(IByteBuffer buffer)
         {
             var left = buffer.ReadableBytes;
             var start = buffer.ReaderIndex;
-                if (left == 0 && buffer.ReaderIndex > 0)
+            if (left == 0 && buffer.ReaderIndex > 0)
             {
                 buffer.SetIndex(0, 0);
                 return;

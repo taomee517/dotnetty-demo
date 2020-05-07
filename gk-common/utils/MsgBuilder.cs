@@ -19,7 +19,11 @@ namespace gk_common.utils
         }
 
 
-        public static byte[] BuildMessage(string dst, string src, int version, int control, int send, int receive, byte[] content)
+        /**
+         * 如果是响应-isAck=true, control = 0x1880
+         * 如果是命令 isAck=false, control = 0x9880
+         */
+        public static byte[] BuildMessage(string dst, string src, int version, bool isAck, int send, int receive, byte[] content)
         {
             var buffer = Unpooled.Buffer(content.Length + GkDefault.Min_Length);
             buffer.WriteByte(GkDefault.Starter);
@@ -28,6 +32,7 @@ namespace gk_common.utils
             buffer.WriteBytes(BytesUtil.Hex2Bytes(src));
             
             buffer.WriteByte(version);
+            var control = isAck ? 0x1880 : 0x9880;
             buffer.WriteBytes(BytesUtil.Int16ToBytes((Int16)control));
 
             buffer.WriteByte(send);
@@ -44,7 +49,8 @@ namespace gk_common.utils
 
         public static byte[] BuildContent(IdType idType, MsgType msgType, OpsType opsType, int attr, int serial, byte[] core)
         {
-            var buffer = Unpooled.Buffer(core.Length + 20);
+            var coreLen = core == null ? 0 : core.Length;
+            var buffer = Unpooled.Buffer( coreLen + 20);
             
             var msgId = Convert.ToInt32(idType);
             var msgIdBytes = BytesUtil.Int32ToBytes(msgId);
@@ -63,16 +69,19 @@ namespace gk_common.utils
             buffer.WriteBytes(opsTypeBytes);
             
             var attrBytes = BytesUtil.Int16ToBytes((Int16)attr);
-            buffer.WriteBytes(opsTypeBytes);
+            buffer.WriteBytes(attrBytes);
 
-            var length = core.Length + 4;
+            var length = coreLen + 4;
             var lenBytes = BytesUtil.Int16ToBytes((Int16)length);
             buffer.WriteBytes(lenBytes);
             
             var serialBytes = BytesUtil.Int32ToBytes(serial);
             buffer.WriteBytes(serialBytes);
 
-            buffer.WriteBytes(core);
+            if (core!=null)
+            {
+                buffer.WriteBytes(core);
+            }
             return buffer.Array;
 
         }

@@ -25,12 +25,12 @@ namespace gk_udp_server
                     .Handler(new ActionChannelInitializer<IChannel>(channel =>
                     {
                         var pipeline = channel.Pipeline;
-                        pipeline.AddLast("echo", new EchoServerHandler());
-                        //pipeline.AddLast("split", new FrameSplitDecoder());
-                        //pipeline.AddLast("validator", new GkValidateHandler());
-                        //pipeline.AddLast("head-decode", new GkHeadDecoder());
-                        //pipeline.AddLast("body-decode", new GkBodyDecoder());
-                        //pipeline.AddLast("core", new GkCoreHandler());
+//                        pipeline.AddLast("echo", new EchoServerHandler());
+                        pipeline.AddLast("split", new FrameSplitDecoder());
+                        pipeline.AddLast("validator", new GkValidateHandler());
+                        pipeline.AddLast("head-decode", new GkHeadDecoder());
+                        pipeline.AddLast("body-decode", new GkBodyDecoder());
+                        pipeline.AddLast("core", new GkCoreHandler());
                     }));
                 const int port = 19557;
                 var boundChannel = await bootstrap.BindAsync(port);

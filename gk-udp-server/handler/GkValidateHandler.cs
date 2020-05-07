@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Sockets;
 
 namespace gk_udp_server.handler
 {
@@ -7,10 +8,14 @@ namespace gk_udp_server.handler
     {
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            if (message is IByteBuffer buffer)
+            if (message is DatagramPacket packet)
             {
+                var buffer = packet.Content;
                 //暂时省略校验
-                context.FireChannelRead(buffer);
+                if (true)
+                {
+                    context.FireChannelRead(packet);
+                }
             }
         }
     }

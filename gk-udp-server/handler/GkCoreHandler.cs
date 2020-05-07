@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Net;
+using DotNetty.Buffers;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels.Sockets;
 using gk_common.beans;
+using gk_common.constants;
 using gk_common.utils;
 using NLog;
 
@@ -13,26 +17,36 @@ namespace gk_udp_server.handler
         
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            var endPoint = context.Channel.RemoteAddress;
-            Logger.Info($"设备与平台建立连接, remote:{endPoint.ToString()}");
-            // SayHello2Server(context,regret);
+            Logger.Info($"设备与平台建立连接");
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-            var endPoint = context.Channel.RemoteAddress;
-            Logger.Warn($"设备与平台断开连接, remote:{endPoint.ToString()}");
+            Logger.Warn($"设备与平台断开连接");
             context.CloseAsync();
         }
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
+            var sender = ((UdpMessage) message).Sender;
             if (message is Message msg)
             {
                 // var json = JsonConvert.SerializeObject(msg,Formatting.None);
                 GkParser.ParseCore(ref msg);
                 Logger.Info($"收到设备消息, msg:{msg.Bodies[0].IdType.ToString()}");
-                MsgBuilder.BuildResp(context, msg);
+//                MsgBuilder.BuildResp(context, msg);
+                var header = msg.Header;
+                var body = msg.Bodies[0];
+                if (IdType.HeartBeat.Equals(body.IdType) && HeartBeatType.Online.Equals(body.HeartBeatInfo.HeartBeatType))
+                {
+                    //下发查询设备类型指令
+                    var content = MsgBuilder.BuildContent(IdType.ReadDeviceInfo, MsgType.Configure, OpsType.ReadCommand,
+                        0, 1, null);
+                    var cmd = MsgBuilder.BuildMessage(header.Src,header.Dst,header.Ver,false,1,0,content);
+                    var buffer = Unpooled.WrappedBuffer(cmd);
+                    var packet = new DatagramPacket(buffer,sender);
+                    context.WriteAndFlushAsync(packet);
+                }
             }
         }
 

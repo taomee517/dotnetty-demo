@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <RootNamespace>mina_echo_server</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Common.Logging.NLog41" Version="3.4.1" />
+      <PackageReference Include="Mina" Version="2.0.12" />
+      <PackageReference Include="NLog" Version="4.7.0" />
+    </ItemGroup>
+
+</Project>

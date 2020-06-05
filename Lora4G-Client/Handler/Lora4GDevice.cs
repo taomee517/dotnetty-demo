@@ -19,9 +19,9 @@ namespace Lora4G_Client.Handler
         public override void ChannelActive(IChannelHandlerContext context)
         {
 //            var msg = GetAndLogHeartBeat();
-//            var msg = GetRealMsg();
+            var msg = GetRealMsg();
 //            var msg = GetCrackDeviceMsg();
-            var msg = GetSettleDeviceMsg();
+//            var msg = GetSettleDeviceMsg();
             context.WriteAndFlushAsync(Unpooled.WrappedBuffer(msg));
         }
 
@@ -79,7 +79,7 @@ namespace Lora4G_Client.Handler
         {
             //线上数据
             var hex =
-                "a5 2e 5d 00 82 5e d7 03 13 40 76 00 01 06 00 00 14 00 16 3e 12 5c 98 00 19 01 02 58 01 00 01 06 00 00 14 01 0b bf 5e d7 03 13 43 72 54 90 ee 96 76 99 7a 05";
+                "00 b8 a5 01 a5 2e 5d 00 82 5e d7 03 13 40 76 00 01 06 00 00 14 00 16 3e 12 5c 98 00 19 01 02 58 01 00 01 06 00 00 14 01 0b bf 5e d7 03 13 43 72 54 90 ee 96 76 99 7a 05 a5 01";
             var mac = hex.Substring(32, 18).Replace(" ", "");
             Console.WriteLine($"Time: {DateTime.Now} Mac: {mac} => 发送消息：{hex}");
             hex = hex.Replace(" ", "");

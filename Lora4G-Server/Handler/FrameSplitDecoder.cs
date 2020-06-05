@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
+using Lora_Common.SDK;
 using Lora_Common.Util;
 
 namespace Lora4G_Server.Handler
@@ -15,8 +16,9 @@ namespace Lora4G_Server.Handler
 
         protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
         {
-            var msg = new byte[input.ReadableBytes];
-            input.ReadBytes(msg);
+//            var msg = new byte[input.ReadableBytes];
+//            input.ReadBytes(msg);
+            var msg = LoraParser.Split(input);
             var hex = BytesUtil.HexInsertSpace(BytesUtil.BytesToHex(msg));
             var srcMac = hex.Substring(50, 18).Replace(" ", "");
             Console.WriteLine($"Time: {DateTime.Now} Mac: {srcMac} => 收到服务器消息：{hex}");

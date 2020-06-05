@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <RootNamespace>Lora_Common</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DotNettyAll" Version="2.6.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Protocol" />
+    </ItemGroup>
+
+</Project>
